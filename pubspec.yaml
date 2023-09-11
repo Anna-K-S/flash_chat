@@ -7,7 +7,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=3.1.0 <4.0.0'
 
 
 dependencies:
@@ -16,7 +16,13 @@ dependencies:
 
 
 
+
   cupertino_icons: ^1.0.2
+  animated_text_kit: ^4.2.2
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.8.0
+  cloud_firestore: ^4.9.0
+  modal_progress_hud_nsn: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +30,8 @@ dev_dependencies:
 
 
   flutter_lints: ^2.0.0
+  
+  
 
 
 flutter:

@@ -1,99 +1,181 @@
+import 'package:flash_chat/service/firebase.dart';
+import 'package:flash_chat/styles/text_styles.dart';
+import 'package:flash_chat/widgets/rounded_button.dart';
+import 'package:flash_chat/styles/decorations_styles.dart';
+import 'package:flash_chat/styles/logo_decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String name;
+
+  const LoginScreen({required this.name, super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  String? email;
+  String? password;
+  //индикатор загрузки
+  late bool _showSpinner = false;
+
+//text controller
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  //метод 'dispose' для освобождения памяти, выделенной под переменные при удалении объекта state
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const SizedBox(
-              height: 200.0,
-              child: Image(
-                image: AssetImage('assets/images/logo.png'),
+    return ModalProgressHUD(
+      inAsyncCall: _showSpinner,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SingleChildScrollView(
+                //логотип
+                child: LogoDecoration(
+                  height: 200.0,
+                ).logo,
               ),
-            ),
-            const SizedBox(
-              height: 48.0,
-            ),
-            TextField(
-              onChanged: (value) {},
-              decoration: const InputDecoration(
-                hintText: 'Enter your email',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              const SizedBox(
+                height: 48.0,
+              ),
+              //поле для ввода email
+              TextField(
+                controller: _emailController,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.emailAddress,
+                //сохранение введенного значение в переменную email
+                onChanged: (value) {
+                  email = value;
+                },
+                decoration: DecorationStyles.textField.copyWith(
+                  hintText: 'Enter your email',
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            TextField(
-              onChanged: (value) {},
-              decoration: const InputDecoration(
-                hintText: 'Enter your password.',
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              const SizedBox(
+                height: 8.0,
+              ),
+              //поле для ввода пароля
+              TextField(
+                controller: _passwordController,
+                textAlign: TextAlign.center,
+                //скрытие введенного текста в поле password
+                obscureText: true,
+                //сохранение введенного значения в переменную password
+                onChanged: (value) {
+                  password = value;
+                },
+                decoration: DecorationStyles.textField.copyWith(
+                  hintText: 'Enter your password',
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 24.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.lightBlueAccent,
-                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {},
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: const Text(
-                    'Log In',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  //кнопка для восстановления пароля
+                  TextButton(
+                    onPressed: () {
+                      _resetPassword();
+                    },
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyles.forgotPasswordButton,
+                    ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
+              RoundedButton(
+                onPressed: () async {
+                  //индикатор загрузки
+                  setState(() {
+                    _showSpinner = true;
+                  });
+
+                  await _logIn();
+
+                  setState(() {
+                    _showSpinner = false;
+                  });
+                },
+                text: 'Log In',
+                color: Colors.lightBlueAccent,
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+//переход на следующий экран(ChatScreen)
+  Future<void> _chatScreen() async {
+    await Navigator.pushNamed(
+      context,
+      '/chat',
+    );
+  }
+
+//метод для перехода на экран сброса пароля
+  Future<void> _resetPassword() async {
+    await Navigator.pushNamed(
+      context,
+      '/resetPassword',
+    );
+  }
+
+  Future<void> _logIn() async {
+    try {
+      //проверяем данные электронной почты и пароля
+      await FirebaseService.auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // если вход успешный, переходим в ChatScreen
+      _chatScreen();
+    } catch (e) {
+      // ошибка входа, отображение диалогового окна с сообщением об ошибке
+      _showErrorDialog('Invalid login or password. Please try again.');
+    }
+  }
+
+  void _showErrorDialog(String errorMessage) {
+    //метод для отображения диалогового окна поверх текущего контекста
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Error',
+          ),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                //закрытие диалогового окна
+                Navigator.of(context).pop(); 
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
