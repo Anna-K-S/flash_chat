@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat/service/firebase.dart';
-import 'package:flash_chat/styles/chat_style.dart';
+import 'package:flash_chat/widgets/user_message.dart';
 import 'package:flutter/material.dart';
 
 class MessagesStream extends StatelessWidget {
@@ -10,12 +10,7 @@ class MessagesStream extends StatelessWidget {
   Widget build(BuildContext context) {
     //StreamBuilder для прослушивания изменений в коллекции Firebase
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseService.firestore
-            .collection(
-              'messages',
-              //сортировка сообщений по полю 'timestamp' в порядке убывания
-            ).orderBy('timestamp', descending: true)
-            .snapshots(),
+        stream: UserService().firebaseSnapshot(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //блок проверяет есть ли в snapshot данные и находится ли поток в состоянии ожидания
           if (!snapshot.hasData ||
@@ -25,15 +20,15 @@ class MessagesStream extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          //если в snapshot есть данные 
+          //если в snapshot есть данные
           if (snapshot.hasData) {
-            //получаются сообщения из snapshot и переворачиваются 
+            //получаются сообщения из snapshot и переворачиваются
             var messages = snapshot.data!.docs.reversed;
 
             //создание списков messageStyles для хранения стилей сообщений
             // и currentUser для хранения адреса электронной почты текущего пользователя
-            final List<ChatScreenStyle> messageStyles = [];
-            final currentUser = FirebaseService.loggedInUser?.email;
+            final List<UserMessage> messageStyles = [];
+            final currentUser = UserService().loggedInUser?.email;
 
             for (var message in messages) {
               final text = message.get('text');
@@ -42,12 +37,11 @@ class MessagesStream extends StatelessWidget {
 
               //для каждого сообщения создается экземпляр ChatScreenStyle
               //хранит информацию о тексте сообщения, отправителе, времени отправки и было ли отправлено сообщение текущим пользователем
-              final messageStyle = ChatScreenStyle(
+              final messageStyle = UserMessage(
                 message: text,
                 sender: sender,
                 authorizedUser: currentUser == sender,
                 timestamp: timestamp,
-                
               );
 
               //добавление созданного стиля в список messageStyles

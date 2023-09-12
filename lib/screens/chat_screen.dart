@@ -15,7 +15,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   //'textController' используется для управления текстовым полем ввода сообщений
   final _messageTextController = TextEditingController();
 
@@ -34,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             onPressed: () {
               //выход пользователя из приложения
-              FirebaseService.auth.signOut();
+              UserService().signOut();
               //возвращение на предыдущий экран(LoginScreen)
               Navigator.pop(context);
             },
@@ -50,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            //'MessageStream' отвечает за отображение сообщений в чате 
+            //'MessageStream' отвечает за отображение сообщений в чате
             const MessagesStream(),
             Container(
               decoration: DecorationStyles.messageContainer,
@@ -75,15 +74,20 @@ class _ChatScreenState extends State<ChatScreen> {
                       _messageTextController.clear();
 
                       //создание нового документа в коллекции в Firestore
-                      FirebaseService.firestore
-                          .collection(
-                        'messages',
-                      )
-                          .add({
-                        'text': message,
-                        'sender': FirebaseService.loggedInUser?.email,
-                        'timestamp': FieldValue.serverTimestamp(),
-                      });
+                      UserService().newDocInCollection(
+                        message,
+                        UserService().loggedInUser?.email,
+                        FieldValue.serverTimestamp(),
+                      );
+                      // FirebaseService.firestore
+                      //     .collection(
+                      //   'messages',
+                      // )
+                      //     .add({
+                      //   'text': message,
+                      //   'sender': FirebaseService.loggedInUser?.email,
+                      //   'timestamp': FieldValue.serverTimestamp(),
+                      // });
                     },
                     child: const Text(
                       'Send',

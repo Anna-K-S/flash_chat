@@ -1,5 +1,5 @@
 import 'package:flash_chat/widgets/rounded_button.dart';
-import 'package:flash_chat/styles/logo_decoration.dart';
+import 'package:flash_chat/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -14,7 +14,8 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
 //SingleTickerProviderStateMixin используется для обеспечения анимации.
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin {
   //контроллер и анимация для цвета фона экрана
   late AnimationController _controller;
   late Animation _animation;
@@ -37,11 +38,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       _controller,
     );
 
-
     //запуск контроллера
     _controller.forward();
 
-    //добавление слушателя 
+    //добавление слушателя
     _controller.addListener(() {
       setState(() {});
     });
@@ -68,9 +68,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           children: <Widget>[
             Row(
               children: <Widget>[
-                LogoDecoration(
+                const AppLogo(
                   height: 60.0,
-                ).logo,
+                ),
                 //для анимации текста
                 AnimatedTextKit(
                   animatedTexts: [
@@ -95,7 +95,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               height: 48.0,
             ),
             RoundedButton(
-              onPressed: _login,
+              onPressed: _openLoginScreen,
               text: 'Log In',
               color: Colors.lightBlueAccent,
             ),
@@ -103,7 +103,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               height: 16.0,
             ),
             RoundedButton(
-              onPressed: _registration,
+              onPressed: _openRegistrationScreen,
               text: 'Register',
               color: Colors.blueAccent,
             ),
@@ -114,7 +114,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   }
 
 //переход на LoginScreen
-  Future<void> _login() async {
+  Future<void> _openLoginScreen() async {
     await Navigator.pushNamed(
       context,
       '/login',
@@ -123,7 +123,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   }
 
 //переход на RegistrationScreen
-  Future<void> _registration() async {
+  Future<void> _openRegistrationScreen() async {
     await Navigator.pushNamed(
       context,
       '/registration',

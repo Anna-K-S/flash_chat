@@ -2,7 +2,7 @@ import 'package:flash_chat/service/firebase.dart';
 import 'package:flash_chat/styles/text_styles.dart';
 import 'package:flash_chat/widgets/rounded_button.dart';
 import 'package:flash_chat/styles/decorations_styles.dart';
-import 'package:flash_chat/styles/logo_decoration.dart';
+import 'package:flash_chat/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -47,11 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SingleChildScrollView(
+              const SingleChildScrollView(
                 //логотип
-                child: LogoDecoration(
+                child: AppLogo(
                   height: 200.0,
-                ).logo,
+                ),
               ),
               const SizedBox(
                 height: 48.0,
@@ -89,11 +89,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  //кнопка для восстановления пароля
+                  // кнопка для восстановления пароля
                   TextButton(
-                    onPressed: () {
-                      _resetPassword();
-                    },
+                    onPressed: _resetPassword,
                     child: const Text(
                       'Forgot Password?',
                       style: TextStyles.forgotPasswordButton,
@@ -102,18 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               RoundedButton(
-                onPressed: () async {
-                  //индикатор загрузки
-                  setState(() {
-                    _showSpinner = true;
-                  });
-
-                  await _logIn();
-
-                  setState(() {
-                    _showSpinner = false;
-                  });
-                },
+                onPressed: _onLogin,
                 text: 'Log In',
                 color: Colors.lightBlueAccent,
               ),
@@ -142,10 +129,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _logIn() async {
     try {
-      //проверяем данные электронной почты и пароля
-      await FirebaseService.auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+    
+      await UserService().signInWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
       // если вход успешный, переходим в ChatScreen
       _chatScreen();
@@ -153,6 +140,19 @@ class _LoginScreenState extends State<LoginScreen> {
       // ошибка входа, отображение диалогового окна с сообщением об ошибке
       _showErrorDialog('Invalid login or password. Please try again.');
     }
+  }
+
+  Future<void> _onLogin() async {
+    //индикатор загрузки
+    setState(() {
+      _showSpinner = true;
+    });
+
+    await _logIn();
+
+    setState(() {
+      _showSpinner = false;
+    });
   }
 
   void _showErrorDialog(String errorMessage) {
@@ -167,15 +167,16 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text(errorMessage),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                //закрытие диалогового окна
-                Navigator.of(context).pop(); 
-              },
+              onPressed: _closeDialog,
               child: const Text('OK'),
             ),
           ],
         );
       },
     );
+  }
+
+  void _closeDialog() {
+    Navigator.of(context).pop();
   }
 }

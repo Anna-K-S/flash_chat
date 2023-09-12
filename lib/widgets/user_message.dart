@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreenStyle extends StatelessWidget {
+class UserMessage extends StatelessWidget {
   final String message;
   final String sender;
   final bool authorizedUser;
   final Timestamp? timestamp;
 
-  const ChatScreenStyle({
+  const UserMessage({
     required this.message,
     required this.sender,
     required this.authorizedUser,

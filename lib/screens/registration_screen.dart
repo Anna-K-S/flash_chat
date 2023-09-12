@@ -1,7 +1,7 @@
 import 'package:flash_chat/service/firebase.dart';
 import 'package:flash_chat/widgets/rounded_button.dart';
 import 'package:flash_chat/styles/decorations_styles.dart';
-import 'package:flash_chat/styles/logo_decoration.dart';
+import 'package:flash_chat/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -15,11 +15,9 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  late String email;
-  late String password;
+  String email = '';
+  String password = '';
   bool _showSpinner = false;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +33,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Flexible(
-                child: LogoDecoration(
+              const Flexible(
+                child: AppLogo(
                   height: 200.0,
-                ).logo,
+                ),
               ),
               const SizedBox(
                 height: 48.0,
@@ -57,7 +55,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(
                 height: 8.0,
               ),
-              //поле для ввода пароля 
+              //поле для ввода пароля
               TextField(
                 textAlign: TextAlign.center,
                 obscureText: true,
@@ -72,22 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 24.0,
               ),
               RoundedButton(
-                onPressed: () async {
-                  setState(() {
-                    _showSpinner = true;
-                  });
-                  //метод, который использует Firebase для создания нового юзера используя email и password 
-                  await FirebaseService.auth.createUserWithEmailAndPassword(
-                    email: email,
-                    password: password,
-                  );
-      
-                  _chat();
-                  setState(() {
-                    _showSpinner = false;
-                  });
-                  
-                },
+                onPressed: _registerUserWithEmailAndPassword,
                 color: Colors.blueAccent,
                 text: 'Register',
               ),
@@ -98,9 +81,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  Future<void> _registerUserWithEmailAndPassword() async {
+    setState(() {
+      _showSpinner = true;
+    });
+    //метод, который использует Firebase для создания нового юзера используя email и password
+    // await FirebaseService.auth.createUserWithEmailAndPassword(
+    //   email: email,
+    //   password: password,
+    // );
+
+    UserService().registerUserWithEmailAndPassword;
+
+    _openChat();
+    setState(() {
+      _showSpinner = false;
+    });
+  }
 
 //переход на следующий экран(ChatScreen)
-  Future<void> _chat() async {
+  Future<void> _openChat() async {
     await Navigator.pushNamed(
       context,
       '/chat',

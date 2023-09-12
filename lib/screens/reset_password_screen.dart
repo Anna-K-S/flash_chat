@@ -1,7 +1,7 @@
 import 'package:flash_chat/styles/text_styles.dart';
 import 'package:flash_chat/widgets/rounded_button.dart';
 import 'package:flash_chat/styles/decorations_styles.dart';
-import 'package:flash_chat/styles/logo_decoration.dart';
+import 'package:flash_chat/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -34,9 +34,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              LogoDecoration(
+              const AppLogo(
                 height: 160.0,
-              ).logo,
+              ),
               const SizedBox(height: 42.0,),
               const Text(
                 'Reset password',
