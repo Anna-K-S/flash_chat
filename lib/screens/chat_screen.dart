@@ -1,4 +1,5 @@
-import 'package:flash_chat/service/firebase.dart';
+import 'package:flash_chat/service/message_service.dart';
+import 'package:flash_chat/service/user_service.dart';
 import 'package:flash_chat/service/messages_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/styles/text_styles.dart';
@@ -50,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             //'MessageStream' отвечает за отображение сообщений в чате
-            const MessagesStream(),
+            const UserMessagesWidget(),
             Container(
               decoration: DecorationStyles.messageContainer,
               child: Row(
@@ -74,9 +75,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       _messageTextController.clear();
 
                       //создание нового документа в коллекции в Firestore
-                      UserService().newDocInCollection(
+                      MessagesService().add( 
                         message,
-                        UserService().loggedInUser?.email,
+                        UserService().currentUser?.email,
                         FieldValue.serverTimestamp(),
                       );
                       // FirebaseService.firestore

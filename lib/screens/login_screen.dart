@@ -1,4 +1,4 @@
-import 'package:flash_chat/service/firebase.dart';
+import 'package:flash_chat/service/user_service.dart';
 import 'package:flash_chat/styles/text_styles.dart';
 import 'package:flash_chat/widgets/rounded_button.dart';
 import 'package:flash_chat/styles/decorations_styles.dart';
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _logIn() async {
     try {
     
-      await UserService().signInWithEmailAndPassword(
+      await UserService().signIn(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );

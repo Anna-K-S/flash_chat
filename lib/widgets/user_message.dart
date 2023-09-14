@@ -1,18 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flash_chat/service/message_service.dart';
 import 'package:flash_chat/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 
-class UserMessage extends StatelessWidget {
-  final String message;
-  final String sender;
+class UserMessageWidget extends StatelessWidget {
+  final UserMessage message;
   final bool authorizedUser;
-  final Timestamp? timestamp;
 
-  const UserMessage({
+  const UserMessageWidget({
     required this.message,
-    required this.sender,
     required this.authorizedUser,
-    required this.timestamp,
     super.key,
   });
 
@@ -25,8 +21,6 @@ class UserMessage extends StatelessWidget {
     final bgColor = authorizedUser ? Colors.lightBlueAccent : Colors.white;
     final textColor = authorizedUser ? TextStyles.message : TextStyles.sender;
 
-    
-
     return Padding(
       padding: const EdgeInsets.all(
         10.0,
@@ -35,7 +29,7 @@ class UserMessage extends StatelessWidget {
         crossAxisAlignment: alignment,
         children: <Widget>[
           Text(
-            sender,
+            message.sender,
             style: TextStyles.sender,
           ),
           Material(
@@ -70,7 +64,7 @@ class UserMessage extends StatelessWidget {
                 horizontal: 20.0,
               ),
               child: Text(
-                message,
+                message.text,
                 style: textColor,
               ),
             ),

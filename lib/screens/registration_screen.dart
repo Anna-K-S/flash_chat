@@ -1,4 +1,4 @@
-import 'package:flash_chat/service/firebase.dart';
+import 'package:flash_chat/service/user_service.dart';
 import 'package:flash_chat/widgets/rounded_button.dart';
 import 'package:flash_chat/styles/decorations_styles.dart';
 import 'package:flash_chat/widgets/app_logo.dart';
@@ -91,7 +91,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     //   password: password,
     // );
 
-    UserService().registerUserWithEmailAndPassword;
+    UserService().register;
 
     _openChat();
     setState(() {
